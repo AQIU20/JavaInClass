@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.Dimension;
 
 public final class OXOGame extends Frame implements WindowListener, ActionListener, MouseListener, KeyListener {
     @Serial private static final long serialVersionUID = 1;
@@ -37,20 +38,33 @@ public final class OXOGame extends Frame implements WindowListener, ActionListen
         model.addPlayer(new OXOPlayer('X'));
         model.addPlayer(new OXOPlayer('O'));
         controller = new OXOController(model);
-        inputBox = new TextField("");
+    
+        inputBox = new TextField(20);
         inputBox.addActionListener(this);
         inputBox.setFont(FONT);
         inputBox.addKeyListener(this);
+    
         view = new OXOView(model);
+        // 给视图设个首选大小
+        view.setPreferredSize(new Dimension(300, 300));
         view.addMouseListener(this);
         view.addKeyListener(this);
-        Panel contentPane = new Panel();
-        contentPane.setLayout(new BorderLayout());
-        contentPane.add(inputBox, BorderLayout.SOUTH);
-        contentPane.add(view, BorderLayout.CENTER);
-        this.setLayout(new GridLayout(1, 1));
-        this.add(contentPane);
-        this.setSize(width, height);
+    
+        // 用两个 Panel 分别放 棋盘 / 输入框
+        Panel boardPanel = new Panel(); 
+        boardPanel.add(view);
+    
+        Panel inputPanel = new Panel();
+        inputPanel.add(inputBox);
+    
+        // 用 GridLayout(2,1) 让这两个 Panel 垂直堆叠
+        Panel mainPanel = new Panel(new GridLayout(2,1));
+        mainPanel.add(boardPanel);
+        mainPanel.add(inputPanel);
+    
+        // 最后把 mainPanel 加到 Frame
+        this.add(mainPanel);
+        this.pack();           // 根据首选大小自动调节窗口
         this.setVisible(true);
         this.addWindowListener(this);
     }
