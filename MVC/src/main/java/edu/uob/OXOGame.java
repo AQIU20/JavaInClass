@@ -46,7 +46,7 @@ public final class OXOGame extends Frame implements WindowListener, ActionListen
     
         view = new OXOView(model);
         // 给视图设个首选大小
-        view.setPreferredSize(new Dimension(300, 300));
+        view.setPreferredSize(new Dimension(600, 600));
         view.addMouseListener(this);
         view.addKeyListener(this);
     
