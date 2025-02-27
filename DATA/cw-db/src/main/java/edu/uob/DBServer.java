@@ -43,6 +43,14 @@ public class DBServer {
     */
     public String handleCommand(String command) {
         // TODO implement your server logic here
+
+        String upperCommand = command.toUpperCase();
+
+        if(upperCommand.)
+
+
+
+
         return "";
     }
 
