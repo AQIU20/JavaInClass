@@ -1,4 +1,6 @@
-package edu.uob;
+package main.java.edu.uob;
+
+import main.java.edu.uob.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,6 +12,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+
+import java.util.List;
 
 /** This class implements the DB server. */
 public class DBServer {
@@ -42,16 +46,48 @@ public class DBServer {
     * <p>This method handles all incoming DB commands and carries out the required actions.
     */
     public String handleCommand(String command) {
-        // TODO implement your server logic here
+        try {
+            // 1. 预处理命令
+            String formatted = new Preprocessor().preprocess(command);
 
-        String upperCommand = command.toUpperCase();
+            // 2. 词法分析（Tokenize）
+            List<String> tokens = new Tokenizer().tokenize(formatted);
+            if (tokens.isEmpty()) {
+                return "";
+            }
 
-        if(upperCommand.)
+            // 3. 语法解析（Parse）
+            SQLStatement statement = new Parser().parse(tokens);
 
+            // 4. 语义分析（Semantic Analysis）
+            new SemanticAnalyzer().validate(statement);
 
-
-
-        return "";
+            // 5. 执行对应的数据库命令
+            if (statement instanceof CreateDatabaseStatement) {
+                return DatabaseManager.createDatabase(((CreateDatabaseStatement) statement).getDatabaseName());
+            } else if (statement instanceof DropDatabaseStatement) {
+                return DatabaseManager.dropDatabase(((DropDatabaseStatement) statement).getDatabaseName());
+            } else if (statement instanceof UseDatabaseStatement) {
+                return DatabaseManager.useDatabase(((UseDatabaseStatement) statement).getDatabaseName());
+            } else if (statement instanceof CreateTableStatement) {
+                CreateTableStatement stmt = (CreateTableStatement) statement;
+                return TableManager.createTable(stmt.getTableName(), stmt.getColumns());
+            } else if (statement instanceof DropTableStatement) {
+                return TableManager.dropTable(((DropTableStatement) statement).getTableName());
+            } else if (statement instanceof InsertStatement) {
+                return QueryExecutor.executeInsert((InsertStatement) statement);
+            } else if (statement instanceof SelectStatement) {
+                return QueryExecutor.executeSelect((SelectStatement) statement);
+            } else if (statement instanceof UpdateStatement) {
+                return QueryExecutor.executeUpdate((UpdateStatement) statement);
+            } else if (statement instanceof DeleteStatement) {
+                return QueryExecutor.executeDelete((DeleteStatement) statement);
+            } else {
+                return ErrorHandler.syntaxError();
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     //  === Methods below handle networking aspects of the project - you will not need to change these ! ===

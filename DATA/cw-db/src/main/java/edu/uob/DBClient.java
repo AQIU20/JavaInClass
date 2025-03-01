@@ -1,4 +1,4 @@
-package edu.uob;
+package main.java.edu.uob;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

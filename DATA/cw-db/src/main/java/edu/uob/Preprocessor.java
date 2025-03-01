@@ -1,22 +1,33 @@
+package main.java.edu.uob;
+
 public class Preprocessor {
-
-    public static String normalize(String rawCommand) {
-
-        String[] symbols = {"(", ")", ",", ";", "=", ">=", "<=", ">", "<", "==", "!="};
-        for (String sym : symbols) {
-            
-            // 用正则在符号前后插入空格
-            rawCommand = rawCommand.replace(sym, " " + sym + " ");
+    /**
+     * Preprocess an SQL statement by trimming whitespace, converting to upper case, and formatting spaces.
+     * This helps to standardize the input for parsing.
+     */
+    public String preprocess(String sql) {
+        if (sql == null) {
+            return null;
         }
 
-        // 将多个空格压缩成一个空格
-        rawCommand = rawCommand.replaceAll("\\s+", " ");
+        sql = sql.trim();
+        if (sql.endsWith(";")) {
+            sql = sql.substring(0, sql.length() - 1);
+        }
+        // Replace newline and tab with space
+        sql = sql.replace('\n', ' ').replace('\t', ' ');
 
-        // 去掉首尾空白
-        rawCommand = rawCommand.trim();
+        sql = sql.replaceAll("\\s+", " ");
 
-        return rawCommand;
+        sql = sql.replace("(", " ( ");
+        sql = sql.replace(")", " ) ");
+        sql = sql.replace(",", " , ");
+        sql = sql.replace("=", " = ");
+        sql = sql.replace("*", " * ");
+        // Collapse multiple spaces again after adding spaces around punctuation
+        sql = sql.replaceAll("\\s+", " ");
+        // Convert to upper case for case-insensitivity of keywords and identifiers
+        sql = sql.toUpperCase();
+        return sql.trim();
     }
-
-    
 }
